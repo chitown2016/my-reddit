@@ -1,24 +1,134 @@
-# Logs
-logs
-*.log
+# ========================================
+# DEPENDENCIES
+# ========================================
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# ========================================
+# BUILD OUTPUTS
+# ========================================
+dist/
+dist-ssr/
+build/
 *.local
 
-# Editor directories and files
+# ========================================
+# ENVIRONMENT FILES
+# ========================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# ========================================
+# LOGS
+# ========================================
+logs
+*.log
+
+# ========================================
+# RUNTIME DATA
+# ========================================
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ========================================
+# COVERAGE DIRECTORY
+# ========================================
+coverage/
+*.lcov
+.nyc_output
+
+# ========================================
+# EDITOR DIRECTORIES AND FILES
+# ========================================
 .vscode/*
 !.vscode/extensions.json
-.idea
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ========================================
+# OS GENERATED FILES
+# ========================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ========================================
+# TEMPORARY FILES
+# ========================================
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+
+# ========================================
+# TESTING
+# ========================================
+coverage/
+.nyc_output/
+junit.xml
+
+# ========================================
+# DEPLOYMENT
+# ========================================
+.vercel/
+.netlify/
+.firebase/
+
+# ========================================
+# PACKAGE MANAGER FILES
+# ========================================
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ========================================
+# MISCELLANEOUS
+# ========================================
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# ========================================
+# REDUX DEVTOOLS
+# ========================================
+redux-devtools-extension/
+
+# ========================================
+# SERVICE WORKER
+# ========================================
+sw.js
+sw.js.map
+
+# ========================================
+# PWA FILES
+# ========================================
+manifest.json
+sw.js
+workbox-*.js
+
+# ========================================
+# ANALYTICS AND MONITORING
+# ========================================
+.sentryclirc
+.sentry/
