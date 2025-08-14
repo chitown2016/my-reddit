@@ -59,7 +59,7 @@ export const fetchRedditData = createAsyncThunk(
         const currentCategory = state.reddit.selectedCategory;
         const subreddit = CATEGORIES[currentCategory]?.subreddit || 'popular';
         
-        const apiUrl = `/api/reddit/r/${subreddit}.json?limit=25&raw_json=1`;
+        const apiUrl = `/api/reddit-popular?limit=25&raw_json=1`;
         console.log(`Attempt ${attempt}: Fetching from ${apiUrl}`);
         
         // Using Vite proxy to avoid CORS issues
