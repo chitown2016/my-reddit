@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  console.log('Popular subreddit API route called');
+  console.log('Catch-all subreddit API route called');
   console.log('Method:', req.method);
   console.log('URL:', req.url);
   console.log('Query:', req.query);
@@ -14,6 +14,14 @@ export default async function handler(req, res) {
   }
   
   try {
+    // Extract subreddit from the path parameter
+    const { path } = req.query;
+    const pathArray = Array.isArray(path) ? path : [path];
+    const subreddit = pathArray[0]?.replace('.json', '') || 'popular';
+    
+    console.log('Extracted subreddit:', subreddit);
+    console.log('Path array:', pathArray);
+    
     // Get Reddit API credentials from environment variables
     const clientId = process.env.REDDIT_CLIENT_ID;
     const clientSecret = process.env.REDDIT_CLIENT_SECRET;
@@ -21,7 +29,7 @@ export default async function handler(req, res) {
     
     if (!clientId || !clientSecret) {
       console.log('Reddit API credentials not found, using mock data');
-      return getMockData(res);
+      return getMockData(res, subreddit);
     }
     
     // Get access token using client credentials flow
@@ -37,17 +45,17 @@ export default async function handler(req, res) {
     
     if (!tokenResponse.ok) {
       console.error('Failed to get access token:', tokenResponse.status);
-      return getMockData(res);
+      return getMockData(res, subreddit);
     }
     
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
     
-    console.log('Got access token, fetching Reddit data');
+    console.log('Got access token, fetching Reddit data for:', subreddit);
     
     // Fetch data from Reddit API
     const queryString = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
-    const redditUrl = `https://oauth.reddit.com/r/popular.json${queryString}`;
+    const redditUrl = `https://oauth.reddit.com/r/${subreddit}.json${queryString}`;
     console.log('Reddit API URL:', redditUrl);
     
     const response = await fetch(redditUrl, {
@@ -75,30 +83,30 @@ export default async function handler(req, res) {
     }
     
     console.log('Reddit API request failed, using mock data');
-    return getMockData(res);
+    return getMockData(res, subreddit);
     
   } catch (error) {
     console.error('Reddit API proxy error:', error);
-    return getMockData(res);
+    return getMockData(res, 'popular');
   }
 }
 
-function getMockData(res) {
+function getMockData(res, subreddit) {
   const mockData = {
     data: {
       children: [
         {
           data: {
             id: 'mock1',
-            title: 'Welcome to Reddit Popular Posts! 🎉',
+            title: `Welcome to r/${subreddit}! 🎉`,
             author: 'reddit_user',
             score: 15420,
             num_comments: 892,
             created_utc: Math.floor(Date.now() / 1000) - 3600,
-            url: 'https://www.reddit.com/r/popular/',
-            permalink: '/r/popular/',
-            subreddit: 'popular',
-            selftext: 'This is a demo of the Reddit Popular Posts app. Set up Reddit API credentials to see real data!',
+            url: `https://www.reddit.com/r/${subreddit}/`,
+            permalink: `/r/${subreddit}/`,
+            subreddit: subreddit,
+            selftext: `This is a demo of the Reddit ${subreddit} posts. Set up Reddit API credentials to see real data!`,
             is_video: false,
             media: null,
             thumbnail: 'https://b.thumbs.redditmedia.com/example.jpg'
@@ -107,15 +115,15 @@ function getMockData(res) {
         {
           data: {
             id: 'mock2',
-            title: 'Amazing sunset from my balcony tonight 🌅',
-            author: 'photographer123',
+            title: `Sample post from r/${subreddit} 📝`,
+            author: 'demo_user',
             score: 8920,
             num_comments: 234,
             created_utc: Math.floor(Date.now() / 1000) - 7200,
-            url: 'https://i.redd.it/example.jpg',
-            permalink: '/r/pics/comments/example/',
-            subreddit: 'pics',
-            selftext: '',
+            url: `https://www.reddit.com/r/${subreddit}/comments/example/`,
+            permalink: `/r/${subreddit}/comments/example/`,
+            subreddit: subreddit,
+            selftext: 'This is sample data while Reddit API credentials are being set up.',
             is_video: false,
             media: null,
             thumbnail: 'https://b.thumbs.redditmedia.com/example.jpg'
@@ -124,53 +132,15 @@ function getMockData(res) {
         {
           data: {
             id: 'mock3',
-            title: 'What\'s your favorite programming language and why? 💻',
-            author: 'dev_enthusiast',
+            title: `Another interesting post in r/${subreddit} 🔍`,
+            author: 'content_creator',
             score: 5670,
             num_comments: 456,
             created_utc: Math.floor(Date.now() / 1000) - 10800,
-            url: 'https://www.reddit.com/r/programming/comments/example/',
-            permalink: '/r/programming/comments/example/',
-            subreddit: 'programming',
-            selftext: 'I\'ve been coding for years and I\'m curious what languages other developers prefer and why. What\'s your go-to language?',
-            is_video: false,
-            media: null,
-            thumbnail: 'https://b.thumbs.redditmedia.com/example.jpg'
-          }
-        },
-        {
-          data: {
-            id: 'mock4',
-            title: 'My cat finally learned to high-five! 🐱✋',
-            author: 'cat_lover',
-            score: 12340,
-            num_comments: 678,
-            created_utc: Math.floor(Date.now() / 1000) - 14400,
-            url: 'https://v.redd.it/example.mp4',
-            permalink: '/r/aww/comments/example/',
-            subreddit: 'aww',
-            selftext: '',
-            is_video: true,
-            media: {
-              reddit_video: {
-                fallback_url: 'https://v.redd.it/example.mp4'
-              }
-            },
-            thumbnail: 'https://b.thumbs.redditmedia.com/example.jpg'
-          }
-        },
-        {
-          data: {
-            id: 'mock5',
-            title: 'Just finished building my first gaming PC! 🎮',
-            author: 'pc_builder',
-            score: 7890,
-            num_comments: 345,
-            created_utc: Math.floor(Date.now() / 1000) - 18000,
-            url: 'https://www.reddit.com/r/buildapc/comments/example/',
-            permalink: '/r/buildapc/comments/example/',
-            subreddit: 'buildapc',
-            selftext: 'After months of research and saving, I finally built my first gaming PC. Here are the specs and some photos!',
+            url: `https://www.reddit.com/r/${subreddit}/comments/example2/`,
+            permalink: `/r/${subreddit}/comments/example2/`,
+            subreddit: subreddit,
+            selftext: 'More sample content to demonstrate the app functionality.',
             is_video: false,
             media: null,
             thumbnail: 'https://b.thumbs.redditmedia.com/example.jpg'
