@@ -1,16 +1,9 @@
 export default async function handler(req, res) {
-  console.log('API route called:', req.url);
-  console.log('Method:', req.method);
-  console.log('Query:', req.query);
-  
-  const { path } = req.query;
-  const pathString = Array.isArray(path) ? path.join('/') : path;
-  
-  console.log('Path string:', pathString);
+  console.log('Popular API route called');
   
   try {
-    // Construct the Reddit API URL
-    const redditUrl = `https://www.reddit.com/${pathString}.json${req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : ''}`;
+    // Construct the Reddit API URL for popular
+    const redditUrl = `https://www.reddit.com/r/popular.json?limit=25&raw_json=1`;
     console.log('Reddit URL:', redditUrl);
     
     // Make the request to Reddit
