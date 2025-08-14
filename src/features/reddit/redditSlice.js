@@ -86,6 +86,11 @@ export const fetchRedditData = createAsyncThunk(
         return data;
       } catch (error) {
         console.error(`Attempt ${attempt} failed:`, error);
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          name: error.name
+        });
         lastError = error;
         
         // If it's the last attempt, reject with the error
