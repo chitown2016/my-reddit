@@ -1,16 +1,22 @@
 export default async function handler(req, res) {
-  console.log('API route called:', req.url);
+  console.log('Popular subreddit API route called');
   console.log('Method:', req.method);
+  console.log('URL:', req.url);
   console.log('Query:', req.query);
   
-  const { path } = req.query;
-  const pathString = Array.isArray(path) ? path.join('/') : path;
-  
-  console.log('Path string:', pathString);
+  // Handle OPTIONS requests for CORS
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(200).end();
+    return;
+  }
   
   try {
-    // Construct the Reddit API URL
-    const redditUrl = `https://www.reddit.com/${pathString}.json${req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : ''}`;
+    // Construct the Reddit API URL for popular
+    const queryString = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+    const redditUrl = `https://www.reddit.com/r/popular.json${queryString}`;
     console.log('Reddit URL:', redditUrl);
     
     // Make the request to Reddit
@@ -41,7 +47,8 @@ export default async function handler(req, res) {
     console.error('Reddit API proxy error:', error);
     res.status(500).json({ 
       error: 'Failed to fetch data from Reddit',
-      details: error.message 
+      details: error.message,
+      url: req.url
     });
   }
 } 
