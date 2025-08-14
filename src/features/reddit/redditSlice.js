@@ -21,6 +21,7 @@ export const CATEGORIES = {
 
 // Helper function to create a more descriptive error message
 const createErrorMessage = (error, context = '') => {
+  // Check for specific production deployment issues
   if (error.includes('Failed to fetch') || error.includes('NetworkError')) {
     return 'Network connection failed. Please check your internet connection and try again.';
   }
@@ -35,6 +36,12 @@ const createErrorMessage = (error, context = '') => {
   }
   if (error.includes('500')) {
     return 'Server error. Reddit may be experiencing issues. Please try again later.';
+  }
+  if (error.includes('CORS') || error.includes('cross-origin')) {
+    return 'Cross-origin request blocked. This might be a deployment configuration issue.';
+  }
+  if (error.includes('Unexpected token') || error.includes('JSON')) {
+    return 'Invalid response format. The API might be returning an error page instead of JSON data.';
   }
   return `Error loading data${context ? ` for ${context}` : ''}: ${error}`;
 };
@@ -52,11 +59,16 @@ export const fetchRedditData = createAsyncThunk(
         const currentCategory = state.reddit.selectedCategory;
         const subreddit = CATEGORIES[currentCategory]?.subreddit || 'popular';
         
+        const apiUrl = `/api/reddit/r/${subreddit}.json?limit=25&raw_json=1`;
+        console.log(`Attempt ${attempt}: Fetching from ${apiUrl}`);
+        
         // Using Vite proxy to avoid CORS issues
         // Adding parameters to get more complete data including media
-        const response = await fetch(`/api/reddit/r/${subreddit}.json?limit=25&raw_json=1`, {
+        const response = await fetch(apiUrl, {
           signal: AbortSignal.timeout(10000) // 10 second timeout
         });
+        
+        console.log(`Response status: ${response.status} ${response.statusText}`);
         
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -66,11 +78,14 @@ export const fetchRedditData = createAsyncThunk(
         
         // Validate the response structure
         if (!data || !data.data || !data.data.children) {
+          console.error('Invalid response structure:', data);
           throw new Error('Invalid response format from Reddit API');
         }
         
+        console.log(`Successfully fetched ${data.data.children.length} posts`);
         return data;
       } catch (error) {
+        console.error(`Attempt ${attempt} failed:`, error);
         lastError = error;
         
         // If it's the last attempt, reject with the error
@@ -97,9 +112,14 @@ export const searchRedditPosts = createAsyncThunk(
       try {
         // Encode the search query for URL
         const encodedQuery = encodeURIComponent(searchQuery);
-        const response = await fetch(`/api/reddit/search.json?q=${encodedQuery}&limit=25&raw_json=1`, {
+        const apiUrl = `/api/reddit/search.json?q=${encodedQuery}&limit=25&raw_json=1`;
+        console.log(`Search attempt ${attempt}: Fetching from ${apiUrl}`);
+        
+        const response = await fetch(apiUrl, {
           signal: AbortSignal.timeout(10000) // 10 second timeout
         });
+        
+        console.log(`Search response status: ${response.status} ${response.statusText}`);
         
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -109,11 +129,14 @@ export const searchRedditPosts = createAsyncThunk(
         
         // Validate the response structure
         if (!data || !data.data || !data.data.children) {
+          console.error('Invalid search response structure:', data);
           throw new Error('Invalid response format from Reddit API');
         }
         
+        console.log(`Successfully fetched ${data.data.children.length} search results`);
         return { data, searchQuery };
       } catch (error) {
+        console.error(`Search attempt ${attempt} failed:`, error);
         lastError = error;
         
         // If it's the last attempt, reject with the error
