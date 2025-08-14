@@ -1,8 +1,5 @@
 export default async function handler(req, res) {
-  console.log('Reddit popular API route called');
-  console.log('Method:', req.method);
-  console.log('URL:', req.url);
-  console.log('Query:', req.query);
+  console.log('Reddit popular alternative API route called');
   
   // Handle OPTIONS requests for CORS
   if (req.method === 'OPTIONS') {
@@ -14,31 +11,21 @@ export default async function handler(req, res) {
   }
   
   try {
-    // Construct the Reddit API URL for popular
+    // Try using the old.reddit.com endpoint which might be less restrictive
     const queryString = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
-    const redditUrl = `https://www.reddit.com/r/popular.json${queryString}`;
-    console.log('Reddit URL:', redditUrl);
+    const redditUrl = `https://old.reddit.com/r/popular.json${queryString}`;
+    console.log('Reddit URL (old):', redditUrl);
     
-    // Make the request to Reddit with more realistic headers
+    // Make the request to Reddit with minimal headers
     const response = await fetch(redditUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'DNT': '1',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
-        'Cache-Control': 'max-age=0'
+        'User-Agent': 'Mozilla/5.0 (compatible; RedditBot/1.0)',
+        'Accept': 'application/json'
       },
       signal: AbortSignal.timeout(10000) // 10 second timeout
     });
     
     console.log('Reddit response status:', response.status);
-    console.log('Reddit response headers:', Object.fromEntries(response.headers.entries()));
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
