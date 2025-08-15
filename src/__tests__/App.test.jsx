@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
@@ -48,15 +48,20 @@ const TestWrapper = ({ children, initialState = {} }) => {
 
 describe('App Component', () => {
   describe('Routing', () => {
-    it('should render PostsView by default (root route)', () => {
+    it('should render PostsView by default (root route)', async () => {
       render(
         <TestWrapper>
           <App />
         </TestWrapper>
       );
       
-      // Should show the main posts view title
-      expect(screen.getByText('Reddit Popular Posts')).toBeInTheDocument();
+      // Initially shows loading state
+      expect(screen.getByText('Loading Reddit App...')).toBeInTheDocument();
+      
+      // Wait for loading to complete and show the main content
+      await waitFor(() => {
+        expect(screen.getByText('Reddit Popular Posts')).toBeInTheDocument();
+      });
     });
 
     it('should render loading state initially', () => {
@@ -66,15 +71,14 @@ describe('App Component', () => {
         </TestWrapper>
       );
       
-      // Should show loading state since useEffect runs and dispatches fetchRedditData
-      // There are two loading elements (PostsView and RawJsonView)
-      const loadingElements = screen.getAllByText('Loading Reddit data...');
-      expect(loadingElements).toHaveLength(2);
+      // Should show the initial loading state
+      expect(screen.getByText('Loading Reddit App...')).toBeInTheDocument();
+      expect(screen.getByText('Please wait while the application initializes.')).toBeInTheDocument();
     });
   });
 
   describe('Component Integration', () => {
-    it('should render the main app structure', () => {
+    it('should render the main app structure', async () => {
       const { container } = render(
         <TestWrapper>
           <App />
@@ -83,14 +87,24 @@ describe('App Component', () => {
       
       // Should have the main app structure
       expect(container.firstChild).toBeInTheDocument();
+      
+      // Wait for loading to complete
+      await waitFor(() => {
+        expect(screen.getByText('Reddit Popular Posts')).toBeInTheDocument();
+      });
     });
 
-    it('should have proper CSS classes', () => {
+    it('should have proper CSS classes', async () => {
       const { container } = render(
         <TestWrapper>
           <App />
         </TestWrapper>
       );
+      
+      // Wait for loading to complete
+      await waitFor(() => {
+        expect(screen.getByText('Reddit Popular Posts')).toBeInTheDocument();
+      });
       
       // Check for main app structure
       const appElement = container.querySelector('.app');
@@ -106,14 +120,13 @@ describe('App Component', () => {
         </TestWrapper>
       );
       
-      // Should show loading state - there are two loading elements
-      const loadingElements = screen.getAllByText('Loading Reddit data...');
-      expect(loadingElements).toHaveLength(2);
+      // Should show the initial loading state
+      expect(screen.getByText('Loading Reddit App...')).toBeInTheDocument();
     });
   });
 
   describe('Component Structure', () => {
-    it('should render the main app container', () => {
+    it('should render the main app container', async () => {
       const { container } = render(
         <TestWrapper>
           <App />
@@ -122,14 +135,24 @@ describe('App Component', () => {
       
       // Should have the main app structure
       expect(container.firstChild).toBeInTheDocument();
+      
+      // Wait for loading to complete
+      await waitFor(() => {
+        expect(screen.getByText('Reddit Popular Posts')).toBeInTheDocument();
+      });
     });
 
-    it('should have proper CSS classes', () => {
+    it('should have proper CSS classes', async () => {
       const { container } = render(
         <TestWrapper>
           <App />
         </TestWrapper>
       );
+      
+      // Wait for loading to complete
+      await waitFor(() => {
+        expect(screen.getByText('Reddit Popular Posts')).toBeInTheDocument();
+      });
       
       // Check for main app structure
       const appElement = container.querySelector('.app');

@@ -40,6 +40,8 @@ describe('Reddit Slice', () => {
         isSearching: false,
         selectedCategory: 'all',
         categories: CATEGORIES,
+        retryCount: 0,
+        lastErrorTime: null,
       });
     });
   });
@@ -138,18 +140,23 @@ describe('Reddit Slice', () => {
         expect(store.getState().reddit.data).toEqual(mockData);
         expect(store.getState().reddit.error).toBeNull();
         expect(store.getState().reddit.isSearching).toBe(false);
-        expect(fetch).toHaveBeenCalledWith('/api/reddit/r/popular.json?limit=25&raw_json=1');
+        expect(fetch).toHaveBeenCalledWith('/api/reddit/r/popular.json?limit=25&raw_json=1', expect.objectContaining({
+          signal: expect.any(Object)
+        }));
       });
 
       it('should handle rejected state', async () => {
+        // Mock fetch to reject immediately for all 3 retry attempts
+        fetch.mockRejectedValueOnce(new Error('Network error'));
+        fetch.mockRejectedValueOnce(new Error('Network error'));
         fetch.mockRejectedValueOnce(new Error('Network error'));
 
         await store.dispatch(fetchRedditData());
 
         expect(store.getState().reddit.loading).toBe(false);
-        expect(store.getState().reddit.error).toBe('Network error');
+        expect(store.getState().reddit.error).toBe('Error loading data for All Posts: Network error');
         expect(store.getState().reddit.isSearching).toBe(false);
-      });
+      }, 20000);
 
       it('should fetch from correct subreddit based on category', async () => {
         // Set category to technology
@@ -163,8 +170,10 @@ describe('Reddit Slice', () => {
 
         await store.dispatch(fetchRedditData());
 
-        expect(fetch).toHaveBeenCalledWith('/api/reddit/r/technology.json?limit=25&raw_json=1');
-      });
+        expect(fetch).toHaveBeenCalledWith('/api/reddit/r/technology.json?limit=25&raw_json=1', expect.objectContaining({
+          signal: expect.any(Object)
+        }));
+      }, 10000);
     });
 
     describe('searchRedditPosts', () => {
@@ -196,18 +205,22 @@ describe('Reddit Slice', () => {
         expect(store.getState().reddit.searchQuery).toBe(searchQuery);
         expect(store.getState().reddit.error).toBeNull();
         expect(store.getState().reddit.isSearching).toBe(true);
-        expect(fetch).toHaveBeenCalledWith('/api/reddit/search.json?q=test%20query&limit=25&raw_json=1');
+        expect(fetch).toHaveBeenCalledWith('/api/reddit/search.json?q=test%20query&limit=25&raw_json=1', expect.objectContaining({
+          signal: expect.any(Object)
+        }));
       });
 
       it('should handle rejected state', async () => {
+        // Mock fetch to reject immediately for all retry attempts
+        fetch.mockRejectedValueOnce(new Error('Search failed'));
         fetch.mockRejectedValueOnce(new Error('Search failed'));
 
         await store.dispatch(searchRedditPosts('test'));
 
         expect(store.getState().reddit.loading).toBe(false);
-        expect(store.getState().reddit.error).toBe('Search failed');
-        expect(store.getState().reddit.isSearching).toBe(true);
-      });
+        expect(store.getState().reddit.error).toBe('Error loading data for search for "test": Search failed');
+        expect(store.getState().reddit.isSearching).toBe(false);
+      }, 20000);
 
       it('should encode search query properly', async () => {
         const mockData = { data: { children: [] } };
@@ -218,8 +231,10 @@ describe('Reddit Slice', () => {
 
         await store.dispatch(searchRedditPosts('cake recipes & tips'));
 
-        expect(fetch).toHaveBeenCalledWith('/api/reddit/search.json?q=cake%20recipes%20%26%20tips&limit=25&raw_json=1');
-      });
+        expect(fetch).toHaveBeenCalledWith('/api/reddit/search.json?q=cake%20recipes%20%26%20tips&limit=25&raw_json=1', expect.objectContaining({
+          signal: expect.any(Object)
+        }));
+      }, 10000);
     });
   });
 }); 
