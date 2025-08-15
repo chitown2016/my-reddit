@@ -16,11 +16,33 @@ export default async function handler(req, res) {
   try {
     // Extract subreddit from the path parameter
     const { path } = req.query;
-    const pathArray = Array.isArray(path) ? path : [path];
-    const subreddit = pathArray[0]?.replace('.json', '') || 'popular';
+    console.log('Raw path parameter:', path);
     
-    console.log('Extracted subreddit:', subreddit);
-    console.log('Path array:', pathArray);
+    let subreddit = 'popular'; // default fallback
+    
+    if (path) {
+      const pathArray = Array.isArray(path) ? path : [path];
+      console.log('Path array:', pathArray);
+      
+      // The path should be something like ['programming.json'] or ['technology.json']
+      if (pathArray.length > 0) {
+        const firstPath = pathArray[0];
+        // Remove .json extension and get the subreddit name
+        subreddit = firstPath.replace('.json', '');
+        console.log('Extracted subreddit from path:', subreddit);
+      }
+    }
+    
+    // Additional fallback: try to extract from URL if path parameter is empty
+    if (subreddit === 'popular' && req.url) {
+      const urlMatch = req.url.match(/\/r\/([^\/\?]+)\.json/);
+      if (urlMatch) {
+        subreddit = urlMatch[1];
+        console.log('Extracted subreddit from URL:', subreddit);
+      }
+    }
+    
+    console.log('Final subreddit:', subreddit);
     
     // Get Reddit API credentials from environment variables
     const clientId = process.env.REDDIT_CLIENT_ID;
