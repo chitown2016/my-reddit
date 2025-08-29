@@ -1,3 +1,5 @@
+// This is not used right now
+
 export default async function handler(req, res) {
   console.log('Reddit search API route called');
   console.log('Method:', req.method);
