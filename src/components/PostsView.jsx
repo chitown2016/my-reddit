@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchRedditData, searchRedditPosts, clearSearch, setCategory, CATEGORIES } from '../features/reddit/redditSlice';
 import { Link } from 'react-router-dom';
 import PostDetailModal from './PostDetailModal';
-import '../styles/design-system.css';
 
 function PostsView() {
   const dispatch = useDispatch();
@@ -156,7 +155,6 @@ function PostsView() {
         <nav className="nav-bar animate-fade-in stagger-1">
           <Link to="/" className="nav-link active">Posts</Link>
           <Link to="/raw-json" className="nav-link">Raw JSON</Link>
-          <Link to="/design-system" className="nav-link">Design System</Link>
         </nav>
         
         <div className="error-container animate-bounce-in">
@@ -245,7 +243,6 @@ function PostsView() {
       <nav className="nav-bar animate-fade-in stagger-1">
         <Link to="/" className="nav-link active">Posts</Link>
         <Link to="/raw-json" className="nav-link">Raw JSON</Link>
-        <Link to="/design-system" className="nav-link">Design System</Link>
       </nav>
       
       {/* Category Filter */}

@@ -1,11 +1,11 @@
 # Reddit Popular Posts App
 
-A modern React application that displays popular Reddit posts with a cohesive design system, search functionality, and interactive features.
+A modern React application that displays popular Reddit posts with search functionality and interactive features.
 
 ## ✨ Features
 
 - **📱 Responsive Design**: Mobile-first approach with adaptive layouts
-- **🎨 Cohesive Design System**: Consistent UI components and design tokens
+
 - **🔍 Search Functionality**: Search Reddit posts across multiple categories
 - **📊 Category Filtering**: Filter posts by technology, gaming, science, and more
 - **🎥 Media Support**: Display videos and images from Reddit posts
@@ -13,31 +13,9 @@ A modern React application that displays popular Reddit posts with a cohesive de
 - **♿ Accessibility**: WCAG 2.1 AA compliant with keyboard navigation
 - **⚡ Performance**: Optimized with React 19 and modern build tools
 
-## 🎨 Design System
 
-This application features a comprehensive design system that ensures consistency and accessibility across all components.
 
-### Design System Features
 
-- **🎯 Design Tokens**: CSS custom properties for colors, typography, spacing, and more
-- **🧩 Component Library**: Reusable UI components (buttons, cards, forms, layouts)
-- **📱 Responsive Utilities**: Mobile-first grid and flexbox utilities
-- **♿ Accessibility**: Focus states, screen reader support, and keyboard navigation
-- **🎭 Animations**: Smooth transitions and hover effects
-- **🌙 Theme Support**: Easy customization and theming capabilities
-
-### View the Design System
-
-Visit `/design-system` in the application to see all available components and their variations.
-
-### Design System Documentation
-
-See [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) for comprehensive documentation including:
-- Design tokens and their usage
-- Component examples and variations
-- Accessibility guidelines
-- Responsive design patterns
-- Customization options
 
 ## 🚀 Getting Started
 
@@ -73,12 +51,9 @@ src/
 ├── components/           # React components
 │   ├── PostsView.jsx    # Main posts display
 │   ├── PostDetailModal.jsx # Post detail modal
-│   ├── RawJsonView.jsx  # JSON data view
-│   └── DesignSystemShowcase.jsx # Design system demo
+│   └── RawJsonView.jsx  # JSON data view
 ├── features/            # Redux slices
 │   └── reddit/         # Reddit API integration
-├── styles/             # CSS files
-│   └── design-system.css # Design system styles
 ├── assets/             # Static assets
 └── __tests__/          # Test files
 ```
@@ -118,35 +93,16 @@ The main component that displays Reddit posts with:
 - Post cards with media support
 - Modal detail views
 
-### Design System
-A comprehensive showcase of all UI components including:
-- Button variants and sizes
-- Card layouts and styles
-- Form elements
-- Typography examples
-- Color palette
-- Layout utilities
+
+
 
 ## 🔧 Customization
-
-### Design System Customization
-
-The design system is built with CSS custom properties, making it easy to customize:
-
-```css
-:root {
-  --color-primary: #your-brand-color;
-  --font-family-primary: 'Your Font', sans-serif;
-  --spacing-lg: 24px;
-}
-```
 
 ### Adding New Components
 
 1. Create your component in `src/components/`
-2. Use design system classes and tokens
-3. Add examples to the design system showcase
-4. Update documentation as needed
+2. Add tests for new features
+3. Update documentation as needed
 
 ## 📱 Responsive Design
 
@@ -170,7 +126,7 @@ The application follows WCAG 2.1 AA guidelines:
 
 1. Fork the repository
 2. Create a feature branch
-3. Follow the design system guidelines
+3. Follow the coding guidelines
 4. Add tests for new features
 5. Submit a pull request
 
@@ -182,4 +138,4 @@ This project is licensed under the MIT License.
 
 - Reddit API for providing the data
 - React team for the amazing framework
-- The design system community for best practices
+- The React community for best practices

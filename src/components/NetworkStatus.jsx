@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/design-system.css';
+
 
 function NetworkStatus() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);

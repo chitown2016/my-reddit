@@ -61,6 +61,8 @@ export const fetchRedditData = createAsyncThunk(
         
         const apiUrl = `/api/reddit/r/${subreddit}.json?limit=25&raw_json=1`;
         console.log(`Attempt ${attempt}: Fetching from ${apiUrl}`);
+
+        console.log('MICHAEL');
         
         // Using Vite proxy to avoid CORS issues
         // Adding parameters to get more complete data including media

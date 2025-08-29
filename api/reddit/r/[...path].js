@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     const clientId = process.env.REDDIT_CLIENT_ID;
     const clientSecret = process.env.REDDIT_CLIENT_SECRET;
     const userAgent = process.env.REDDIT_USER_AGENT || 'MyRedditApp/1.0';
-    
+
     if (!clientId || !clientSecret) {
       console.log('Reddit API credentials not found, using mock data');
       return getMockData(res, subreddit);
